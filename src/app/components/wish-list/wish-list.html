@@ -1,0 +1,123 @@
+
+<div class="wishlist-page">
+
+  <div class="wishlist-header">
+
+    <div>
+      <p class="subtitle">YOUR PERSONAL COLLECTION</p>
+      <h1>My Wish List <span>♥</span></h1>
+      <p class="description">
+        Keep your favorite movies in one place.
+      </p>
+    </div>
+
+    <div class="stats">
+      <span class="stats-number">{{ totalMovies() }}</span>
+      <span>Saved Movies</span>
+    </div>
+
+  </div>
+
+  <div class="toolbar">
+
+    <div class="search-box">
+      <span>⌕</span>
+      <input
+        #search
+        type="text"
+        placeholder="Search your favorite movies..."
+        (input)="searchTerm.set(search.value)"
+      >
+    </div>
+
+    <select #sort (change)="sortMode.set(sort.value)">
+      <option value="recent">Recently added</option>
+      <option value="title">Title A-Z</option>
+      <option value="rating">Highest rated</option>
+    </select>
+
+    <button class="back-btn" (click)="backToMovieList()">
+      Back to Movies
+    </button>
+
+  </div>
+
+  @if (totalMovies() === 0) {
+
+    <div class="empty-state">
+      <div class="empty-icon">♡</div>
+      <h2>Your Wishlist is empty</h2>
+      <p>Start exploring and save movies you love.</p>
+
+      <button (click)="backToMovieList()">
+        Explore Movies
+      </button>
+    </div>
+
+  } @else {
+
+    <div class="movies-grid">
+
+      @for (movie of filteredMovies(); track movie.id) {
+
+        <div class="movie-card">
+
+          <div class="poster"
+               (click)="navigateToMovie(movie)">
+
+            <img
+              [src]="'https://image.tmdb.org/t/p/w500/' + movie.poster_path"
+              [alt]="movie.title"
+            >
+
+            <div class="poster-overlay">
+              <span>View Details</span>
+            </div>
+
+          </div>
+
+          <div class="card-content">
+
+            <h3>{{ movie.title }}</h3>
+
+            <div class="movie-info">
+              <span>
+                ★ {{ movie.vote_average }}
+              </span>
+              <span>
+                {{ movie.release_date }}
+              </span>
+            </div>
+
+            <div class="card-actions">
+
+              <button class="details-btn"
+                (click)="navigateToMovie(movie)">
+                Details
+              </button>
+
+              <button class="remove-btn"
+                (click)="removeFromWishList(movie)">
+                Remove ♥
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      } @empty {
+
+        <div class="no-results">
+          <h2>No movies found</h2>
+          <p>Try another movie title.</p>
+        </div>
+
+      }
+
+    </div>
+
+  }
+
+</div>

@@ -1,0 +1,272 @@
+
+<div class="movie-page">
+
+  <!-- BANNIERE CINEMATIQUE -->
+  @if (featuredMovie(); as movie) {
+
+    <section class="hero-banner">
+
+      <div class="hero-background"
+           [style.background-image]="'linear-gradient(to right, rgba(0,0,0,0.95), rgba(0,0,0,0.25)), url(https://image.tmdb.org/t/p/original/' + (movie.backdrop_path || movie.poster_path) + ')'">
+      </div>
+
+      <div class="hero-content">
+
+        <p class="hero-label">FEATURED MOVIE</p>
+
+        <h1>{{ movie.title }}</h1>
+
+        <div class="hero-meta">
+          <span>★ {{ movie.vote_average }}</span>
+          <span>{{ movie.release_date }}</span>
+          <span>{{ movie.original_language }}</span>
+        </div>
+
+        <p class="hero-description">
+          {{ movie.overview }}
+        </p>
+
+        <button class="hero-button"
+                (click)="navigateTo(movie)">
+          ▶ View Movie Details
+        </button>
+
+      </div>
+
+    </section>
+
+  }
+
+  <!-- CARROUSEL ANIME -->
+  <section class="carousel-section">
+
+    <div class="carousel-header">
+      <div>
+        <p class="section-label">NOW SHOWING</p>
+        <h2>Trending on Movie-DB</h2>
+      </div>
+
+      <span class="carousel-hint">
+        Discover more movies
+      </span>
+    </div>
+
+    <div class="carousel-viewport">
+
+      <div class="carousel-track">
+
+        @for (movie of carouselMovies(); track movie.id) {
+
+          <div class="carousel-card"
+               (click)="navigateTo(movie)">
+
+            <img
+              [src]="'https://image.tmdb.org/t/p/w500/' + movie.poster_path"
+              [alt]="movie.title"
+            >
+
+            <div class="carousel-overlay">
+              <h3>{{ movie.title }}</h3>
+              <span>★ {{ movie.vote_average }}</span>
+            </div>
+
+          </div>
+
+        }
+
+        <!-- Deuxieme copie pour un defilement continu -->
+        @for (movie of carouselMovies(); track movie.id) {
+
+          <div class="carousel-card"
+               (click)="navigateTo(movie)">
+
+            <img
+              [src]="'https://image.tmdb.org/t/p/w500/' + movie.poster_path"
+              [alt]="movie.title"
+            >
+
+            <div class="carousel-overlay">
+              <h3>{{ movie.title }}</h3>
+              <span>★ {{ movie.vote_average }}</span>
+            </div>
+
+          </div>
+
+        }
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- HISTORIQUE DES FILMS CONSULTES -->
+  @if (movieService.viewHistory().length > 0) {
+
+    <section class="history-section">
+
+      <div class="history-header">
+
+        <div>
+          <p class="section-label">YOUR MOVIE JOURNEY</p>
+          <h2>Recently Viewed</h2>
+          <p class="section-description">
+            Rediscover movies you recently explored.
+          </p>
+        </div>
+
+        <button class="clear-history-btn"
+                (click)="clearHistory()">
+          Clear History
+        </button>
+
+      </div>
+
+      <div class="history-list">
+
+        @for (movie of movieService.viewHistory(); track movie.id) {
+
+          <div class="history-card">
+
+            <div class="history-poster"
+                 (click)="navigateTo(movie)">
+
+              <img
+                [src]="'https://image.tmdb.org/t/p/w500/' + movie.poster_path"
+                [alt]="movie.title"
+              >
+
+              <div class="history-overlay">
+                <span>View Again</span>
+              </div>
+
+            </div>
+
+            <div class="history-info">
+
+              <h3>{{ movie.title }}</h3>
+
+              <span class="history-rating">
+                ★ {{ movie.vote_average }}
+              </span>
+
+              <button class="history-remove-btn"
+                      (click)="removeFromHistory(movie)">
+                Remove
+              </button>
+
+            </div>
+
+          </div>
+
+        }
+
+      </div>
+
+    </section>
+
+  }
+
+  <!-- EN-TETE ORIGINAL DE LA COLLECTION -->
+  <div class="collection-header">
+
+    <div>
+      <p class="section-label">MOVIE COLLECTION</p>
+
+      <h2>Discover Movies</h2>
+
+      <p class="section-description">
+        Explore movies and discover your next favorite.
+      </p>
+    </div>
+
+    <div class="movies-count">
+      {{ movieService.movieList().length }} Movies
+    </div>
+
+  </div>
+
+  <!-- LISTE ORIGINALE DU PROFESSEUR AVEC PAGINATION -->
+  <div class="container">
+
+    @for (movie of paginatedMovies(); track movie.id) {
+
+      <div class="movie-card"
+           (click)="navigateTo(movie)">
+
+        <div class="movie-poster">
+
+          <img
+            [src]="'https://image.tmdb.org/t/p/original/' + movie.poster_path"
+            [alt]="movie.title"
+          >
+
+          <div class="poster-overlay">
+            <span>▶ View Details</span>
+          </div>
+
+        </div>
+
+        <div class="movie-detail">
+          <h2>{{ movie.title }}</h2>
+        </div>
+
+      </div>
+
+    }
+
+  </div>
+
+  <!-- PAGINATION COMPACTE -->
+  @if (totalPages() > 1) {
+
+    <div class="pagination">
+
+      <button
+        class="page-arrow"
+        (click)="firstPage()"
+        [disabled]="currentPage() === 1">
+        « First
+      </button>
+
+      <button
+        class="page-arrow"
+        (click)="previousPage()"
+        [disabled]="currentPage() === 1">
+        ‹ Previous
+      </button>
+
+      @for (page of pageNumbers(); track page) {
+
+        <button
+          class="page-number"
+          [class.active]="currentPage() === page"
+          (click)="goToPage(page)">
+          {{ page }}
+        </button>
+
+      }
+
+      <button
+        class="page-arrow"
+        (click)="nextPage()"
+        [disabled]="currentPage() === totalPages()">
+        Next ›
+      </button>
+
+      <button
+        class="page-arrow"
+        (click)="lastPage()"
+        [disabled]="currentPage() === totalPages()">
+        Last »
+      </button>
+
+    </div>
+
+    <p class="page-indicator">
+      Page {{ currentPage() }} of {{ totalPages() }}
+    </p>
+
+  }
+
+</div>

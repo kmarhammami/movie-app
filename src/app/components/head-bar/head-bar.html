@@ -1,0 +1,23 @@
+
+<div class="container">
+
+    <h1 (click)="navigateHome()">My Movie-DB</h1>
+
+    <div class="header-actions">
+
+        <!-- Bouton mode jour / nuit -->
+        <button class="theme-btn" (click)="toggleTheme()">
+            {{ isLight() ? '☾ Night' : '☀ Day' }}
+        </button>
+
+        <!-- Bouton Wish List original avec compteur -->
+        <button (click)="navigateToWishList()">
+            Wish List <fa-icon [icon]="faHeart" />
+            <span class="wishlist-count">
+                {{ movieService.wishList().length }}
+            </span>
+        </button>
+
+    </div>
+
+</div>
